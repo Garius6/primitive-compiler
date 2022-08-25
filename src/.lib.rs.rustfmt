@@ -1,0 +1,83 @@
+use std::collections::HashMap;
+use std::fmt::Debug;
+use std::io;
+use std::process;
+
+struct Lexer {
+    symbols: HashMap<char, Token>,
+    words: HashMap<String, Token>,
+    ch: char,
+    ch_pos: isize,
+}
+
+impl Lexer {
+    fn new() -> Lexer {
+        let mut symbols = HashMap::new();
+        symbols.insert('{', Token::LBRA);
+        symbols.insert('}', Token::RBRA);
+        symbols.insert('=', Token::EQUAL);
+        symbols.insert(';', Token::SEMICOLON);
+        symbols.insert('(', Token::LPAR);
+        symbols.insert(')', Token::RPAR);
+        symbols.insert('+', Token::PLUS);
+        symbols.insert('-', Token::MINUS);
+        symbols.insert('<', Token::LESS);
+
+        let mut words = HashMap::new();
+        words.insert(String::from("if"), Token::IF);
+        words.insert(String::from("else"), Token::ELSE);
+        words.insert(String::from("do"), Token::DO);
+        words.insert(String::from("while"), Token::WHILE);
+
+        Lexer {
+            symbols,
+            words,
+            ch: ' ',
+            ch_pos: 0,
+        }
+    }
+
+    fn error(self, msg: String) {
+        eprintln!("{}", msg);
+        process::exit(1);
+    }
+
+    fn get_c(&mut self, ch: char) {
+        self.ch = ch;
+        self.ch_pos = self.ch_pos + 1;
+    }
+
+    fn next_tok(&mut self) {
+        self.get_c();
+        self.get_c()
+        let value = ' ';
+        let sym = Token::EOF;
+        while sym == ' ' {
+            if self.ch.is_whitespace() {
+                self.get_c(' ')
+            }
+            if self.symbols.contains_key(&self.ch) {
+                sym = self.symbols.get(&self.ch).unwrap();
+            }
+        }
+    }
+}
+
+enum Token {
+    NUM,
+    ID,
+    IF,
+    ELSE,
+    WHILE,
+    DO,
+    LBRA,
+    RBRA,
+    LPAR,
+    RPAR,
+    PLUS,
+    MINUS,
+    LESS,
+    EQUAL,
+    SEMICOLON,
+    EOF,
+}
